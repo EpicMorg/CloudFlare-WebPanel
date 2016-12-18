@@ -76,24 +76,55 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>1</td>
-      <td>Account 1</td>
-      <td>example1.com</td>
-      <td><a href="/edit.php"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>Account 1</td>
-      <td>example2.com</td>
-      <td><a href="/edit.php"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>Account 2</td>
-      <td>example3.com</td>
-      <td><a href="/edit.php"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>
-    </tr>
+  <?php
+
+require_once ("sql.php");
+  $data = $mysqli->query("SELECT * FROM users");
+
+  while($row = $data->fetch_array()) {
+
+
+      $connection = curl_init();
+
+      curl_setopt($connection, CURLOPT_URL, "https://api.cloudflare.com/client/v4/zones");
+
+      curl_setopt($connection, CURLOPT_RETURNTRANSFER, 1);
+
+
+      $headers = [
+          'X-Auth-Email: ' . $row["email"],
+          'X-Auth-Key: ' . $row["api"]
+      ];
+
+      curl_setopt($connection, CURLOPT_HTTPHEADER, $headers);
+
+      $result = curl_exec($connection);
+
+      curl_close($connection);
+
+      $result = json_decode($result);
+      foreach ($result->result as $val)
+      {
+          echo "<tr>";
+          echo "<td>".$row["id"]."</td>";
+          echo "<td>".$row["name"]."</td>";
+          echo "<td>".$val->name."</td>";
+          echo "<td><a href=\"/edit.php?zone_id={$val->id}&user_id={$row["id"]}\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i></a></td>";
+          echo "</tr>";
+      }
+
+
+
+
+
+
+
+
+  }
+  $mysqli->close();
+
+  ?>
+
   </tbody>
 </table> 
     </div>

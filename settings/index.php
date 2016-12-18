@@ -69,9 +69,28 @@
       <p class="lead">В данном разделе можно добавлять и редактировать аккаунты <code>CloudFlare</code>.</p>
      
 <ul class="nav nav-tabs">
-  <li class="active"><a href="#cf-acc-1" data-toggle="tab" aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i> Account 1</a></li>
-  <li class=""><a href="#cf-acc-2" data-toggle="tab" aria-expanded="false"><i class="fa fa-user" aria-hidden="true"></i> Account 2</a></li>
-  <li><a href="JavaScript:();" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
+
+    <?php
+require_once("../functions.php");
+
+    $k = 0;
+    while($user = print_user()) {
+$k++;
+if($k = 1) {
+    echo '<li class="active"><a href="#cf-acc-'.$k.'" class="click_account"  data-toggle="tab" data-name="'.$user->show_info("NAME").'" data-email="'.$user->show_info("EMAIL").'" data-api="'.$user->show_info("API").'"  aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i> '.$user->show_info("NAME").'</a></li>';
+}
+else
+{
+    echo '<li><a href="#cf-acc-'.$k.'" data-toggle="tab" class="click_account" data-name="'.$user->show_info("NAME").'" data-email="'.$user->show_info("EMAIL").'" data-api="'.$user->show_info("API").'" aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i> '.$user->show_info("NAME").'</a></li>';
+}
+
+    }
+
+
+    ?>
+
+
+  <li><a href="JavaScript:();" data-toggle="modal" id="add_account" data-target="#myModal"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
  
 </ul>
 <div id="myTabContent" class="tab-content">
@@ -80,43 +99,27 @@
   <div class="panel-body">
     <div class="form-group">
     	<label class="control-label" for="disabledInput">Название</label>
-    	<input class="form-control" id="disabledInput" type="text" placeholder="Account 1" disabled="">
+    	<input class="form-control" id="name" type="text" placeholder="" disabled="">
     </div>
+      <div class="form-group">
+          <label class="control-label" for="disabledInput">E-mail</label>
+          <input class="form-control" id="email" type="text" placeholder="" disabled="">
+      </div>
     <div class="form-group">
     	<label class="control-label" for="disabledInput2">API Token</label>
-    	<input class="form-control" id="disabledInput2" type="text" placeholder="token here" disabled="">
+    	<input class="form-control" id="api" type="text" placeholder="" disabled="">
     </div>
   </div>
   <div class="panel-footer text-right">
-  	<a href="JavaScript:();" class="btn btn-info" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+  	<a href="JavaScript:();" id="edit_account" class="btn btn-info" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i></a>
   	<a href="JavaScript:();" class="btn btn-danger" data-toggle="modal" data-target="#myModal2"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
   </div>
 </div>
 
   </div>
-  <div class="tab-pane fade" id="cf-acc-2">
-<div class="panel panel-default">
-  <div class="panel-body">
-    <div class="form-group">
-    	<label class="control-label" for="disabledInput3">Название</label>
-    	<input class="form-control" id="disabledInput3" type="text" placeholder="Account 2" disabled="">
-    </div>
-    <div class="form-group">
-    	<label class="control-label" for="disabledInput4">API Token</label>
-    	<input class="form-control" id="disabledInput4" type="text" placeholder="token here" disabled="">
-    </div>
-  </div>
-    <div class="panel-footer text-right">
-  	<a href="JavaScript:();" class="btn btn-info" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-  	<a href="JavaScript:();" class="btn btn-danger" data-toggle="modal" data-target="#myModal2"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-  </div>
-</div>
-
-  </div>
-</div>
 
     </div>
-
+    </div>
     <footer class="footer navbar-default">
       <div class="container">
         <p class="text-muted pull-right">Version 0.1-git-asdADqsdf</p>
@@ -124,27 +127,34 @@
       </div>
     </footer>
 
+
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Добавление\Редактирование</h4>
+        <h4 class="modal-title" id="myModalLabel">Редактирование</h4>
       </div>
       <div class="modal-body">
 <form class="form-horizontal">
   <fieldset>
-    <legend>Аккаунт CloudFlare</legend>
+    <legend id="formLegend">Аккаунт CloudFlare</legend>
     <div class="form-group">
-      <label for="inputEmail" class="col-lg-2 control-label">Название</label>
+      <label class="col-lg-2 control-label">Название</label>
       <div class="col-lg-10">
-        <input type="text" class="form-control" id="inputName" placeholder="Account 1">
+        <input type="text" class="form-control" name="name"  id="formName" placeholder="" required>
       </div>
     </div>
+      <div class="form-group">
+          <label class="col-lg-2 control-label">E-mail</label>
+          <div class="col-lg-10">
+              <input type="email" class="form-control" name="email" id="formEmail" placeholder="" required>
+          </div>
+      </div>
     <div class="form-group">
-      <label for="textArea" class="col-lg-2 control-label">API Token</label>
+      <labelclass="col-lg-2 control-label">API Token</label>
       <div class="col-lg-10">
-        <textarea class="form-control" rows="3" id="textArea" placeholder=""></textarea>
+        <textarea class="form-control" name="api" rows="3" id="formApi" placeholder="" required></textarea>
         <span class="help-block">Добавьте ваш токен аккаунта CloudFlare.</span>
       </div>
     </div>
@@ -152,8 +162,8 @@
 </form> 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-        <button type="button" class="btn btn-primary">Применить</button>
+        <button type="button" id="cancle" class="btn btn-default" data-dismiss="modal">Отмена</button>
+        <button type="button" id="submit" class="btn btn-primary">Применить</button>
       </div>
     </div>
   </div>
@@ -170,7 +180,7 @@
 		<p class="text-danger">Вы уверены что хотите удалить данный аккаунт?</p>
       </div>
       <div class="modal-footer">
-      	<button type="button" class="btn btn-danger pull-left">Да</button>
+      	<button type="button" id="delete_account" class="btn btn-danger pull-left">Да</button>
         <button type="button" class="btn btn-success" data-dismiss="modal">Нет</button>
       </div>
     </div>
@@ -185,5 +195,118 @@
     <script src="/assets/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
+  <script type="text/javascript">
+      $(document).ready(function() {
+
+           var mode = 1;
+
+            function init() {
+
+                $("#name").attr("placeholder", $(".nav-tabs li.active > a").data("name"));
+                $("#email").attr("placeholder", $(".nav-tabs li.active > a").data("email"));
+                $("#api").attr("placeholder", $(".nav-tabs li.active > a").data("api"));
+
+            }
+
+          init();
+
+          $(".click_account").click(function() {
+              init();
+          });
+
+
+          $("#add_account").click(function() {
+
+            if(mode != 1) { mode = 1 }
+
+              $("#formLegend").html("Аккаунт CloudFlare");
+
+              $("#formName").val("");
+              $("#formEmail").val("");
+              $("#formApi").val("");
+
+          });
+
+          $("#submit").click(function() {
+
+              if(mode == 1) {
+
+              $(".nav-tabs li").removeClass("active");
+
+              //$.post add
+              $(".nav-tabs").append('<li class="active"><a href="#cf-acc-" class="click_account"  data-toggle="tab" data-name="'+$("#formName").val()+'" data-email="'+$("#formEmail").val() + '" data-api="'+$("#formApi").val()+'"  aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i>'+$("#formName").val()+'</a></li>')
+
+              init();
+
+
+if($(".nav-tabs li").length == 2) {
+                  $(".panel-body div.form-group").show(0);
+                  $(".alert").remove();
+                  $(".panel-footer a").removeClass("disabled");
+}
+
+                  $("#myModal").modal("hide");
+              }
+
+              else
+              {
+                  //$.post edit
+
+
+              }
+
+          });
+
+
+          $("#edit_account").click(function() {
+              if(mode != 0) { mode = 0; }
+
+              $("#formLegend").html("Редактирование аккаунта " + $(".nav-tabs li.active > a").data("name"));
+
+              $("#formName").val($(".nav-tabs li.active > a").data("name"));
+              $("#formEmail").val($(".nav-tabs li.active > a").data("email"));
+              $("#formApi").val($(".nav-tabs li.active > a").data("api"));
+
+          });
+
+
+          $("#delete_account").click(function() {
+//$.post del
+              $(".nav-tabs li.active").remove();
+
+
+              if ($(".nav-tabs li").length != 1) {
+                  $(".nav-tabs li").eq($(".nav-tabs li").length - 1).addClass("active")
+                  init();
+              }
+              else
+
+              {
+
+                  $(".panel-body div.form-group").hide(0);
+                  $(".panel-body").append('<div class="alert alert-info">Вы еще не добавили ни одного аккаунта!</div>');
+
+                  $(".panel-footer a").addClass("disabled");
+
+              }
+
+
+
+
+              $("#myModal2").modal("hide");
+
+          });
+
+          $('body').delegate('a[data-toggle="tab"]', 'shown.bs.tab', function(){
+
+              init();
+
+          });
+
+
+
+
+      });
+  </script>
   </body>
 </html>

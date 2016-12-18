@@ -63,13 +63,22 @@
 
     <!-- Begin page content -->
     <div class="container">
+<?php
+require_once ("functions.php");
+require_once ("sql.php");
+$data = $mysqli->query("SELECT * FROM users");
+
+?>
       <div class="page-header">
         <h1>Добро пожаловать в CloudFlare WebPanel</h1>
-      </div> 
+      </div>
+        <?php
+if(!$data->num_rows) { ?>
       <!-- Показывается только если конфиг пустой -->
       <p class="lead">Похоже, у вас еще не добавлено ни одного аккаунта <code>CloudFlare</code>.</p>
       <p>Зайдите в <a href="/settings/">настройки</a> для продолжения работы.</p>
-
+<?php }
+$mysqli->close();?>
       <!-- Показывается только если какой-то из токенов протух -->
       <p class="lead">Похоже, некоторые токены <code>CloudFlare</code> неверны.</p>
       <p>Зайдите в <a href="/settings/">настройки</a> для продолжения работы.</p>
