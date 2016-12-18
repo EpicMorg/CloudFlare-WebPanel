@@ -1,3 +1,7 @@
+<?php
+require_once ("sql.php");
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -30,37 +34,8 @@
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <img class="navbar-brand"  src="/assets/images/cf-logo-h-rgb-rev.png">
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Главная</a></li>
-            <li class="dropdown">
-              <a href="JavaScript:();" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle" aria-hidden="true"></i> Отображение <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="/index-all.php"><i class="fa fa-users" aria-hidden="true"></i> Все аккаунты</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Отдельные аккаунты</li>
-                <li><a href="/index-1.php"><i class="fa fa-user" aria-hidden="true"></i> Account 1</a></li>
-                <li><a href="/index-2.php"><i class="fa fa-user" aria-hidden="true"></i> Account 2</a></li>
-              </ul>
-            </li> 
-            <li><a href="/settings/"><i class="fa fa-cogs" aria-hidden="true"></i> Настройки</a></li>
-            <li><a href="/rss.php"><i class="fa fa-rss-square" aria-hidden="true"></i> RSS</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
 
+<?php include("nav.php"); ?>
     <!-- Begin page content -->
     <div class="container">
 <?php
@@ -78,10 +53,56 @@ if(!$data->num_rows) { ?>
       <p class="lead">Похоже, у вас еще не добавлено ни одного аккаунта <code>CloudFlare</code>.</p>
       <p>Зайдите в <a href="/settings/">настройки</a> для продолжения работы.</p>
 <?php }
-$mysqli->close();?>
-      <!-- Показывается только если какой-то из токенов протух -->
-      <p class="lead">Похоже, некоторые токены <code>CloudFlare</code> неверны.</p>
+
+$flag = false;
+        $str = "";
+while($row = $data->fetch_array())  {
+
+    $connection = curl_init();
+
+    curl_setopt($connection, CURLOPT_URL, "https://api.cloudflare.com/client/v4/user");
+
+    curl_setopt($connection, CURLOPT_RETURNTRANSFER, 1);
+
+    $headers = [
+        'X-Auth-Email: ' . $row["email"],
+        'X-Auth-Key: ' . $row["api"],
+        'Content-Type: application/json'
+    ];
+
+    curl_setopt($connection, CURLOPT_HTTPHEADER, $headers);
+
+    $result = curl_exec($connection);
+
+    curl_close($connection);
+
+    $result = json_decode($result);
+
+    if(!isset($result->result->id)) {
+        $flag = true;
+
+        $str = $str.", ".$row["name"];
+
+    }
+
+
+}
+
+if($flag) {
+    $str = ltrim($str, ", ");
+    print <<< HTML
+
+<!-- Показывается только если какой-то из токенов протух -->
+      <p class="lead">Похоже, некоторые токены ({$str}) <code>CloudFlare</code> неверны.</p>
       <p>Зайдите в <a href="/settings/">настройки</a> для продолжения работы.</p>
+HTML;
+}
+
+        $mysqli->close();
+        ?>
+
+
+
 
     </div>
 

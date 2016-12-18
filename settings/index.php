@@ -1,3 +1,7 @@
+<?php
+require_once("../functions.php");
+require_once ("../sql.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -30,36 +34,7 @@
   <body>
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <img class="navbar-brand"  src="/assets/images/cf-logo-h-rgb-rev.png">
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Главная</a></li>
-            <li class="dropdown">
-              <a href="JavaScript:();" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle" aria-hidden="true"></i> Отображение <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="/index-all.php"><i class="fa fa-users" aria-hidden="true"></i> Все аккаунты</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Отдельные аккаунты</li>
-                <li><a href="/index-1.php"><i class="fa fa-user" aria-hidden="true"></i> Account 1</a></li>
-                <li><a href="/index-2.php"><i class="fa fa-user" aria-hidden="true"></i> Account 2</a></li>
-              </ul>
-            </li> 
-            <li class="active"><a href="/settings/"><i class="fa fa-cogs" aria-hidden="true"></i> Настройки</a></li>
-            <li><a href="/rss.php"><i class="fa fa-rss-square" aria-hidden="true"></i> RSS</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+    <?php include("../nav.php"); ?>
 
     <!-- Begin page content -->
     <div class="container">
@@ -71,18 +46,24 @@
 <ul class="nav nav-tabs">
 
     <?php
-require_once("../functions.php");
 
-    $k = 0;
-    while($user = print_user()) {
-$k++;
-if($k = 1) {
-    echo '<li class="active"><a href="#cf-acc-'.$k.'" class="click_account"  data-toggle="tab" data-name="'.$user->show_info("NAME").'" data-email="'.$user->show_info("EMAIL").'" data-api="'.$user->show_info("API").'"  aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i> '.$user->show_info("NAME").'</a></li>';
-}
-else
-{
-    echo '<li><a href="#cf-acc-'.$k.'" data-toggle="tab" class="click_account" data-name="'.$user->show_info("NAME").'" data-email="'.$user->show_info("EMAIL").'" data-api="'.$user->show_info("API").'" aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i> '.$user->show_info("NAME").'</a></li>';
-}
+    $data = $mysqli->query("SELECT * FROM users");
+
+    if($data->num_rows) {
+
+
+        $k = 0;
+        while ($row = $data->fetch_array()) {
+            $k++;
+
+            if ($k == 1) {
+                echo '<li class="active"><a href="#cf-acc-' . $k . '" class="click_account"  data-toggle="tab" data-id="' . $row["id"] . '" data-name="' . $row["name"] . '" data-email="' . $row["email"] . '" data-api="' . $row["api"] . '"  aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i> ' . $row["name"] . '</a></li>';
+            } else {
+
+                echo '<li><a href="#cf-acc-' . $k . '" data-toggle="tab" class="click_account" data-id="' . $row["id"] . '" data-name="' . $row["name"] . '" data-email="' . $row["email"] . '" data-api="' . $row["api"] . '" aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i> ' . $row["name"] . '</a></li>';
+            }
+
+        }
 
     }
 
@@ -97,18 +78,26 @@ else
   <div class="tab-pane fade active in" id="cf-acc-1">
 <div class="panel panel-default">
   <div class="panel-body">
-    <div class="form-group">
+    <div class="form-group" <?php if(!$data->num_rows) { echo 'style="display:none"'; } ?>>
     	<label class="control-label" for="disabledInput">Название</label>
     	<input class="form-control" id="name" type="text" placeholder="" disabled="">
     </div>
-      <div class="form-group">
+      <div class="form-group" <?php if(!$data->num_rows) { echo 'style="display:none"'; } ?>>
           <label class="control-label" for="disabledInput">E-mail</label>
           <input class="form-control" id="email" type="text" placeholder="" disabled="">
       </div>
-    <div class="form-group">
+    <div class="form-group" <?php if(!$data->num_rows) { echo 'style="display:none"'; } ?>>
     	<label class="control-label" for="disabledInput2">API Token</label>
     	<input class="form-control" id="api" type="text" placeholder="" disabled="">
     </div>
+
+
+      <?php
+if(!$data->num_rows) {
+    echo '<div class="alert alert-info">Вы еще не добавили ни одного аккаунта!</div>';
+
+}
+?>
   </div>
   <div class="panel-footer text-right">
   	<a href="JavaScript:();" id="edit_account" class="btn btn-info" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i></a>
@@ -199,7 +188,7 @@ else
       $(document).ready(function() {
 
            var mode = 1;
-
+var id;
             function init() {
 
                 $("#name").attr("placeholder", $(".nav-tabs li.active > a").data("name"));
@@ -231,30 +220,44 @@ else
 
               if(mode == 1) {
 
-              $(".nav-tabs li").removeClass("active");
 
-              //$.post add
-              $(".nav-tabs").append('<li class="active"><a href="#cf-acc-" class="click_account"  data-toggle="tab" data-name="'+$("#formName").val()+'" data-email="'+$("#formEmail").val() + '" data-api="'+$("#formApi").val()+'"  aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i>'+$("#formName").val()+'</a></li>')
+                  $.post( "../add_user.php", { name: $("#formName").val(), email: $("#formEmail").val(), api:  $("#formApi").val()}, function(data) {
 
-              init();
+                      if(data.success) {
+
+                          $(".nav-tabs li").removeClass("active");
+                          $("#add_account").parent().before('<li class="active"><a href="#cf-acc-" class="click_account"  data-toggle="tab" data-id="'+data.id+'" data-name="'+$("#formName").val()+'" data-email="'+$("#formEmail").val() + '" data-api="'+$("#formApi").val()+'"  aria-expanded="true"><i class="fa fa-user" aria-hidden="true"></i>'+$("#formName").val()+'</a></li>');
+                          init();
+                      } else { alert("Error!");}
+                  }, "json");
 
 
-if($(".nav-tabs li").length == 2) {
+
+
+if($(".nav-tabs li").length == 1) {
                   $(".panel-body div.form-group").show(0);
                   $(".alert").remove();
                   $(".panel-footer a").removeClass("disabled");
 }
 
-                  $("#myModal").modal("hide");
+
               }
 
               else
               {
-                  //$.post edit
+                  $.post( "../edit_user.php", {id: id, name: $("#formName").val(), email: $("#formEmail").val(), api:  $("#formApi").val()}, function(data) {
+
+                      if(data.success) {
+                          $("#name").attr("placeholder", $("#formName").val());
+                              $("#email").attr("placeholder", $("#formEmail").val());
+                                  $("#api").attr("placeholder",$("#formApi").val());
+                          $(".nav-tabs li.active > a").text($("#formName").val());
+                      } else { alert("Error!");}
+                  }, "json");
 
 
               }
-
+              $("#myModal").modal("hide");
           });
 
 
@@ -266,30 +269,39 @@ if($(".nav-tabs li").length == 2) {
               $("#formName").val($(".nav-tabs li.active > a").data("name"));
               $("#formEmail").val($(".nav-tabs li.active > a").data("email"));
               $("#formApi").val($(".nav-tabs li.active > a").data("api"));
+              id = $(".nav-tabs li.active > a").data("id");
 
           });
 
 
           $("#delete_account").click(function() {
 //$.post del
-              $(".nav-tabs li.active").remove();
+              id = $(".nav-tabs li.active > a").data("id");
+              $.post( "../delete_user.php", {id: id}, function(data) {
+
+                  if(data.success) {
+
+                      $(".nav-tabs li.active").remove();
 
 
-              if ($(".nav-tabs li").length != 1) {
-                  $(".nav-tabs li").eq($(".nav-tabs li").length - 1).addClass("active")
-                  init();
-              }
-              else
+                      if ($(".nav-tabs li").length != 1) {
+                          $(".nav-tabs li").eq($(".nav-tabs li").length - 2).addClass("active")
+                          init();
+                      }
+                      else
 
-              {
+                      {
 
-                  $(".panel-body div.form-group").hide(0);
-                  $(".panel-body").append('<div class="alert alert-info">Вы еще не добавили ни одного аккаунта!</div>');
+                          $(".panel-body div.form-group").hide(0);
+                          $(".panel-body").append('<div class="alert alert-info">Вы еще не добавили ни одного аккаунта!</div>');
 
-                  $(".panel-footer a").addClass("disabled");
+                          $(".panel-footer a").addClass("disabled");
 
-              }
+                      }
 
+
+                  } else { alert("Error!");}
+              }, "json");
 
 
 
