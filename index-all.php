@@ -120,5 +120,16 @@ require_once ("sql.php");
     <script src="/assets/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        function changeClass(){
+              $("#page-main").removeClass("active"); 
+              $("#page-settings").removeClass("active");
+              $("#page-show-all").addClass("active");
+              $("#page-show").addClass("active");
+            }
+            changeClass();
+           });
+    </script>
   </body>
 </html>

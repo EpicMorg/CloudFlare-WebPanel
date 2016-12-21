@@ -187,8 +187,8 @@ if(!$data->num_rows) {
   <script type="text/javascript">
       $(document).ready(function() {
 
-           var mode = 1;
-var id;
+            var mode = 1;
+            var id;
             function init() {
 
                 $("#name").attr("placeholder", $(".nav-tabs li.active > a").data("name"));
@@ -197,7 +197,15 @@ var id;
 
             }
 
+          function changeClass(){
+            $("#page-main").removeClass("active"); 
+            $("#page-settings").addClass("active");
+            $("#page-show").removeClass("active");
+            $("#page-show-all").removeClass("active");
+          }
+
           init();
+          changeClass();
 
           $(".click_account").click(function() {
               init();
