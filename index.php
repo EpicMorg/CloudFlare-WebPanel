@@ -96,7 +96,15 @@ if($flag) {
       <p class="lead">Похоже, некоторые токены ({$str}) <code>CloudFlare</code> неверны.</p>
       <p>Зайдите в <a href="/settings/">настройки</a> для продолжения работы.</p>
 HTML;
+
+}else{
+    print <<< HTML
+<p class="lead">Похоже, что сейчас все отлично!</p>
+<p>Можете продолжить работу, выбрав в меню соответсвующий аккаунт <code>CloudFlare</code>.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0" frameborder="0" allowfullscreen></iframe>
+HTML;
 }
+
 
         $mysqli->close();
         ?>
