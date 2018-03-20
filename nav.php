@@ -13,7 +13,7 @@
             <ul class="nav navbar-nav">
                 <li id="page-main" class="active"><a href="/"><i class="fa fa-home" aria-hidden="true"></i> Главная</a></li>
                 <li  id="page-show-all" class="dropdown">
-                    <a href="JavaScript:();" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle" aria-hidden="true"></i> Отображение <span class="caret"></span></a>
+                    <a href="JavaScript:();" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle" aria-hidden="true"></i> Список доменов <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li id="page-show"><a href="/index-all.php"><i class="fa fa-users" aria-hidden="true"></i> Все аккаунты</a></li>
                         <li role="separator" class="divider"></li>
